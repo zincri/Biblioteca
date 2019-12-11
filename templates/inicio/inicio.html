@@ -1,0 +1,16 @@
+{% extends "layouts/master.html" %}
+
+{% load static %}
+{% block content%}
+<h1>Bienvenido estas en index</h1>
+
+{%for user in users%}
+            <tr>
+                <td>{{user.id}}</td>
+                <br/>
+                <td>{{user.username}}</td>
+                <br/>
+                <td>{{user.first_name}}</td>
+            </tr>
+{%endfor%}
+{% endblock%}
