@@ -1,0 +1,4 @@
+from rest_framework import viewsets
+from  apps.inicio.api.serializers import AutorSerializers,CategoriaSerializers,PrestadorSerializers,PortadaSerializers,LibroSerializers,EditorialSerializers,DetallePrestamoSerializers
+from apps.inicio.models import Autor,Libro,Prestador,Portada,Editorial,Categoria,DetallePrestamo
+
