@@ -1,4 +1,4 @@
 from django.contrib import admin
-from apps.inicio.models import Lender
+from apps.inicio.models import Prestador
 # Register your models here.
-admin.site.register(Lender)
+admin.site.register(Prestador)
