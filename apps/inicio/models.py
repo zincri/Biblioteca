@@ -7,7 +7,7 @@ class Prestador(User):
     activo = models.BooleanField(default=True,blank=True,null=True)
     def __str__(self):
         return str(self.id)+" - "+self.username
-    def names(self):
+    def name(self):
         return str(self.username+" Si esta retornando la funcion")
 class Autor(User):
     telefono = models.CharField(max_length=15,blank=True,null=True)
