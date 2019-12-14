@@ -2,15 +2,39 @@
 
 {% load static %}
 {% block content%}
-<h1>Bienvenido estas en index</h1>
+<h1>Bienvenido {{ user.username | upper}}</h1>
 
 {%for user in users%}
             <tr>
                 <td>{{user.id}}</td>
                 <br/>
-                <td>{{user.username}}</td>
+                <td>{{user.name}}</td>
                 <br/>
                 <td>{{user.first_name}}</td>
             </tr>
 {%endfor%}
 {% endblock%}
+{% block extra_js %}
+<script>
+console.log("si");
+var myData = {
+    hello: 1
+};
+
+console.log("Si paso")
+
+async function getBooks() {
+          try {
+            let res = await fetch('http://127.0.0.1:8000/api/libros/');
+            let data = await res.json();
+            console.log(data);
+            
+          }catch (error) {
+            console.log(error);
+          }
+        }
+        //console.log(tipo_telefono);
+getBooks();
+
+</script>
+{% endblock extra_js %}
