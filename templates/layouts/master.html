@@ -223,8 +223,9 @@
                             class="btn btn-success btn-lg"
                             onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">Yes</a>
-                            <form id="logout-form" action="#" method="POST" style="display: none;">
+                            <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
                                 <!--AQUI VA EL TOKEN csrf-->
+                                {% csrf_token %}
                             </form>
                             <button class="btn btn-default btn-lg mb-control-close">No</button>
                         </div>
@@ -235,12 +236,15 @@
         <!-- END MESSAGE BOX-->
 
 
+
         <!-- START PRELOADS -->
         <audio id="audio-alert" src="{% static 'audio/alert.mp3'%}" preload="auto"></audio>
         <audio id="audio-fail" src="{% static 'audio/fail.mp3'%}" preload="auto"></audio>
         <!-- END PRELOADS -->                  
         
     <!-- START SCRIPTS -->
+    {% block extra_js %}
+    {% endblock%}
         <!-- START PLUGINS -->
         <script type="text/javascript" src="{% static 'js/plugins/jquery/jquery.min.js'%}"></script>
         <script type="text/javascript" src="{% static 'js/plugins/jquery/jquery-ui.min.js'%}"></script>
