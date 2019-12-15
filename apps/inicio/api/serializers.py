@@ -60,10 +60,7 @@ class LibroSerializer(serializers.ModelSerializer):
         
 
 class PrestadorSerializer(serializers.ModelSerializer):
-    libro = LibroSerializer(many=True)
-    #categoriaId = serializers.PrimaryKeyRelatedField(write_only=True,
-    #                                            queryset=Categoria.objects.all(),
-    #                                             source='categoria')
+    #libro = LibroSerializer(many=True)
     class Meta:
         model = Prestador
         fields = ('__all__')
@@ -78,6 +75,7 @@ class DetallePrestamoSerializer(serializers.ModelSerializer):
     prestadorId = serializers.PrimaryKeyRelatedField(write_only=True,
                                                 queryset=Prestador.objects.all(),
                                                  source='prestador')
+                                                 
     class Meta:
         model = DetallePrestamo
         fields = ('__all__')
@@ -86,3 +84,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'username', 'email', 'is_staff']
+
+class DetalleLibroPrestamoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetallePrestamo
+        fields = ('__all__')
+
+    """ def create(self, validated_data):
+        libro = Libro.objects.get(validated_data.get("id"))
+        libro.save() 
+        return validated_data """

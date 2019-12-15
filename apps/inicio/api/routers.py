@@ -11,3 +11,4 @@ router.register(r'editoriales',viewset.EditorialViewSet,base_name='list-editoria
 router.register(r'portadas',viewset.PortadaViewSet,base_name='list-portadas')
 router.register(r'detalle_prestamos',viewset.DetallePrestamoViewSet,base_name='list-prestamos')
 router.register(r'users', viewset.UserViewSet)
+router.register(r'libro-prestado', viewset.LibroPrestadoViewSet,base_name='get-libro-prestado')
