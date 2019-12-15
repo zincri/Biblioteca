@@ -35,6 +35,7 @@ class Libro(models.Model):
     anio_publicacion = models.CharField(max_length=10,blank=True,null=True)
     estado_prestado = models.BooleanField(default=False,blank=True,null=True)
     activo = models.BooleanField(default=True,blank=True,null=True)
+    stock = models.IntegerField(default=0,blank=True,null=True)
     categoria = models.ForeignKey(Categoria,blank=True,null=True,
                                     on_delete=models.SET_NULL,
                                     related_name='libros',
