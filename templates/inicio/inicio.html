@@ -4,37 +4,89 @@
 {% block content%}
 <h1>Bienvenido {{ user.username | upper}}</h1>
 
-{%for user in users%}
-            <tr>
-                <td>{{user.id}}</td>
-                <br/>
-                <td>{{user.name}}</td>
-                <br/>
-                <td>{{user.first_name}}</td>
-            </tr>
-{%endfor%}
+<div class="container">
+</div>
+
 {% endblock%}
 {% block extra_js %}
+
 <script>
-console.log("si");
-var myData = {
-    hello: 1
-};
+    async function getBooks() {
+      try {
+        let res = await fetch('http://127.0.0.1:8000/api/libros/');
+        let data = await res.json();
+        myData = data;
 
-console.log("Si paso")
+        for (let libro of data) {
+          
+          let image_portada = (libro.portada!=null)? libro.portada.url:"http://127.0.0.1:8000/static/assets/images/users/no-image.jpg"
+          
+          let content = 
+          "<div class='col-md-3'>"+
+            "<div class='panel panel-default'>"+
+              "<div class='panel-body profile'>"+
+                "<div class='profile-image'>"+
+                  "<a><img style='' src='"+image_portada+"' alt='"+libro.nombre+"' /></a>"+
+                "</div>"+
+                "<div class='profile-data'>"+
+                  "<div class='profile-data-name'>"+libro.nombre+"</div>"+
+                  "<div class='profile-data-title'>"+libro.nombre+"</div>"+
+                "</div>"+
+                //"<div class='profile-controls'>"+
+                //  "<a class='profile-control-left' data-target='#message-box-info-44' data-toggle='modal'><span class='fa fa-edit'></span></a>"+
+                //  "<a class='profile-control-right' data-target='#message-box-danger-44' data-toggle='modal'><span class='fa fa-trash-o'></span></a>"+
+                //"</div>"+
+              "</div>"+
+              "<div class='panel-body'>"+
+                "<div class='contact-info'>"+
+                  "<div class='col-md-6'>"+
+                    "<p><small>Categoria</small><br />"+libro.categoria.nombre_categoria+"</p>"+
+                    "<p><small>Publicado en:</small><br />"+libro.anio_publicacion+"</p>"+
+                    "<p><small>Stock:</small><br />"+libro.stock+"</p>"+
+                  "</div>"+
+                  "<div class='col-md-6'>"+
+                    "<p><small>Editorial</small><br />"+libro.editorial.nombre+"</p>"+
+                    "<p><small>Autor</small><br />"+libro.autor.first_name +" "+ libro.autor.last_name +"</p>"+
+                  "</div>"+
+                "</div>"+
+                "<a href='' onclick='myFunction("+libro.id+")' class='btn btn-primary'><span class='fa fa-check'></span>Prestar</a>"+
+              "</div>"+
+            "</div>"+
+          "</div>"
 
-async function getBooks() {
-          try {
-            let res = await fetch('http://127.0.0.1:8000/api/libros/');
-            let data = await res.json();
-            console.log(data);
-            
-          }catch (error) {
-            console.log(error);
-          }
+
+
+          /*
+          let content = 
+          "<div class='col-xs-auto spaceCard'>"+
+          "<div class='card'>"+
+          "<h5 class='card-header'>" + libro.nombre +"</h5>"+
+          "<div class='card-body'>"+
+          "<h5 class='card-title'><span class='colorDnicos'>Editorial: </span>" + libro.editorial.nombre + "</h5>"+
+          "<div class='card-text'><ul>"
+
+          content += "</ul></div><a href='#' class='btn btn-primary btn-block'><span class='fa fa-check'></span>x button</a></div</div></div>";
+
+          */
+          $('.container').append(content);
         }
-        //console.log(tipo_telefono);
-getBooks();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getBooks();
+
+    function myFunction(libro_id) {
+      alert("Agregado: "+libro_id);
+      //primero: vas a preguntar si tiene stock.
+      //segundo: vas a checar si no tiene prestado el libro.
+      //tecero: restar 1 al stock del libro.
+      //cuarto: lanzar un modal para ingresar la fecha de entrega del libro.
+      //cuarto: agregar el libro a mis libros prestados(DetallePrestamo).
+      //fin.
+      
+    }
+    
 
 </script>
 {% endblock extra_js %}
