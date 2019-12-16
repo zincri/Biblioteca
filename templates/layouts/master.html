@@ -39,7 +39,7 @@
                                 -->
                             </div>
                             <div class="profile-data">
-                                <div class="profile-data-name">Nombre del usuario</div>
+                                <div class="profile-data-name">{{user.username | upper}}</div>
                                 <div class="profile-data-title">
                                     Prestador
                                 </div>
@@ -54,12 +54,12 @@
                     </li>
                     <li class="xn-title">Navegación</li>
                     <li class="active">
-                        <a href="#"><span class="fa fa-desktop"></span> <span class="xn-text">Dashboard</span></a>                        
+                        <a href="{% url 'inicio' %}"><span class="fa fa-desktop"></span> <span class="xn-text">Dashboard</span></a>                        
                     </li>                    
                     <li class="xn-openable">
-                        <a href="#"><span class="fa fa-file-text-o"></span> <span class="xn-text">Mis libros</span></a>
+                        <a href=""><span class="fa fa-file-text-o"></span> <span class="xn-text">Mis libros</span></a>
                         <ul>
-                            <li><a href="#"><span class="fa fa-money"></span> Prestados</a></li>            
+                            <li><a href="{% url 'prestados' %}"><span class="fa fa-money"></span> Prestados</a></li>            
                         </ul>
                     </li>
                     

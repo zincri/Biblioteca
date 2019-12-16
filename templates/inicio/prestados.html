@@ -1,0 +1,142 @@
+{% extends "layouts/master.html" %}
+
+{% load static %}
+{% block content%}
+<h1>Bienvenido Prestados {{ user.username | upper}}</h1>
+
+<div class="container">
+</div>
+
+{% endblock%}
+{% block extra_js %}
+{% csrf_token %}
+<script>
+var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    async function getBooks() {
+      try {
+        let id_prestador= {{user.id}}
+        //let url = "http://127.0.0.1:8000/api/prestadores/"+id_prestador+"/";
+        let url = "http://127.0.0.1:8000/api/detalle_prestamos/";
+        let res = await fetch(url);
+        let data = await res.json();
+        myData = data.libro;
+
+        for (let prestamo of data) {
+
+          if(prestamo.prestador.id == id_prestador){
+          
+          let image_portada = (prestamo.libro.portada!=null)? prestamo.libro.portada.url:"http://127.0.0.1:8000/static/assets/images/users/no-image.jpg"
+          
+          let content = 
+          "<div class='col-md-3'>"+
+            "<div class='panel panel-default'>"+
+              "<div class='panel-body profile'>"+
+                "<div class='profile-image'>"+
+                  "<a><img style='' src='"+image_portada+"' alt='"+prestamo.libro.nombre+"' /></a>"+
+                "</div>"+
+                "<div class='profile-data'>"+
+                  "<div class='profile-data-name'>"+prestamo.libro.nombre+"</div>"+
+                  "<div class='profile-data-title'>"+prestamo.libro.nombre+"</div>"+
+                "</div>"+
+              "</div>"+
+              "<div class='panel-body'>"+
+                "<div class='contact-info'>"+
+                  "<div class='col-md-6'>"+
+                    "<p><small>Categoria</small><br />"+prestamo.libro.categoria.nombre_categoria+"</p>"+
+                    "<p><small>Publicado en:</small><br />"+prestamo.libro.anio_publicacion+"</p>"+
+                    "<p><small>Stock:</small><br />"+prestamo.libro.stock+"</p>"+
+                  "</div>"+
+                  "<div class='col-md-6'>"+
+                    "<p><small>Editorial</small><br />"+prestamo.libro.editorial.nombre+"</p>"+
+                    "<p><small>Autor</small><br />"+prestamo.libro.autor.first_name +" "+ prestamo.libro.autor.last_name +"</p>"+
+                  "</div>"+
+                "</div>"+
+                "<a href='' onclick='myFunction("+prestamo.libro.id+","+prestamo.libro.stock+","+prestamo.id+")' class='btn btn-primary'><span class='fa fa-check'></span>Devolver</a>"+
+              "</div>"+
+            "</div>"+
+          "</div>"
+          $('.container').append(content);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getBooks();
+
+    function myFunction(libro_id,stock,prestamo_id) {
+      
+      //primero: vas a preguntar si tiene stock.
+      //if(stock>0){
+        setActivoFalsePrestamo(libro_id,stock,prestamo_id);
+        //alert("Agregado: "+id+" y stock: "+stock);
+        
+        //segundo: vas a checar si no tiene prestado el libro.
+
+        //tecero: restar 1 al stock del libro.
+        //cuarto: lanzar un modal para ingresar la fecha de entrega del libro.
+        //cuarto: agregar el libro a mis libros prestados(DetallePrestamo).
+        //fin.
+      //}
+      //else{
+      //  alert("El libro no se puede prestar porque no cuenta con stock.");
+      //}
+      
+       
+    }
+
+
+    async function setActivoFalsePrestamo(libro_id,stock,prestamo_id) {
+      try {
+        let flag = false;
+        let stock_nuevo = stock + 1;
+        /*
+        let res = await fetch('http://127.0.0.1:8000/api/libro-prestado/');
+        let data = await res.json();
+        for ( let detalle of data){
+          if (detalle.libro==libro_id && detalle.prestador=={{user.id}}){
+            flag=true;
+          }
+        }
+        */
+        if (flag){
+            //alert("Ya esta asociado el libro a este prestador");
+        }else{
+            let user_id = {{user.id}}
+            fetch("http://127.0.0.1:8000/api/libro-prestado/"+prestamo_id+"/", {
+                    method: 'PUT',
+                    credentials: "same-origin",
+                    headers:{
+                      'X-CSRFToken': csrftoken,
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
+                      'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                      'activo':false
+                    })
+                
+              }).then(function(response) {
+                  //alert(response);
+                  return response.json();
+              }).then(function(data) {
+                  console.log("Dato:", data);
+                  //alert(data);
+              }).catch(function(ex) {
+                  console.log("Catch con:", ex);
+                  //alert(ex);
+              });
+              
+              alert("¡El libro se devolvió!");
+
+              
+        }
+      } catch (error) {
+          console.log(error);
+          alert("Error");
+      }
+    }
+    
+
+</script>
+{% endblock extra_js %}

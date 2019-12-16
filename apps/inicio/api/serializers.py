@@ -60,7 +60,7 @@ class LibroSerializer(serializers.ModelSerializer):
         
 
 class PrestadorSerializer(serializers.ModelSerializer):
-    #libro = LibroSerializer(many=True)
+    libro = LibroSerializer(many=True)
     class Meta:
         model = Prestador
         fields = ('__all__')
@@ -90,7 +90,24 @@ class DetalleLibroPrestamoSerializer(serializers.ModelSerializer):
         model = DetallePrestamo
         fields = ('__all__')
 
-    """ def create(self, validated_data):
-        libro = Libro.objects.get(validated_data.get("id"))
-        libro.save() 
-        return validated_data """
+    def create(self, validated_data):
+        libro = validated_data.get("libro")
+        libro.stock = libro.stock - 1
+        libro.save()
+        
+        dp = DetallePrestamo()
+        dp.prestador = validated_data.get("prestador") 
+        dp.libro = validated_data.get("libro")
+        dp.activo = True
+        dp.save()
+        return validated_data
+    def update(self, instance, validated_data):
+        print(instance.libro.stock + 1)
+        libro = Libro.objects.get(id=instance.libro.id)
+        libro.stock = instance.libro.stock + 1
+        libro.save()
+
+        #instance.libro.stock = int(instance.libro.stock + 1) 
+        instance.activo = validated_data.get('activo', instance.activo)
+        instance.save()
+        return instance

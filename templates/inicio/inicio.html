@@ -61,30 +61,23 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     function myFunction(id,stock) {
       
       //primero: vas a preguntar si tiene stock.
+      //segundo: vas a checar si no tiene prestado el libro.
+      //tecero: restar 1 al stock del libro.
+      //cuarto: lanzar un modal para ingresar la fecha de entrega del libro.
+      //cuarto: agregar el libro a mis libros prestados(DetallePrestamo).
+      //fin.
       if(stock>0){
         getLibroPrestado(id,stock);
-        //alert("Agregado: "+id+" y stock: "+stock);
-        
-        //segundo: vas a checar si no tiene prestado el libro.
-
-        //tecero: restar 1 al stock del libro.
-        //cuarto: lanzar un modal para ingresar la fecha de entrega del libro.
-        //cuarto: agregar el libro a mis libros prestados(DetallePrestamo).
-        //fin.
       }
       else{
         alert("El libro no se puede prestar porque no cuenta con stock.");
-      }
-      
-       
+      }  
     }
 
 
     async function getLibroPrestado(libro_id,stock) {
       try {
         let flag = false;
-        
-        
         let res = await fetch('http://127.0.0.1:8000/api/libro-prestado/');
         let data = await res.json();
         for ( let detalle of data){
@@ -92,10 +85,12 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
             flag=true;
           }
         }
-        if (!flag){
+        if (flag){//Quita el diferente si lo tienes
             alert("Ya esta asociado el libro a este prestador");
         }else{
-            let user_id = {{user.id}}
+            let user_id = {{ user.id }}
+            console.log(user_id);
+            alert(user_id);
             fetch("http://127.0.0.1:8000/api/libro-prestado/", {
                     method: 'POST',
                     credentials: "same-origin",
@@ -112,44 +107,16 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                     })
                 
               }).then(function(response) {
-                  alert(response);
+                  //alert(response);
                   return response.json();
               }).then(function(data) {
                   console.log("Dato:", data);
-                  alert(data);
+                  //alert(data);
               }).catch(function(ex) {
                   console.log("Catch con:", ex);
-                  alert(ex);
+                  //alert(ex);
               });
-              /* 
-              let new_stock = parseInt(stock) - 1;
-              console.log(new_stock);
-              let url = "http://127.0.0.1:8000/api/libros/"+libro_id+"/";
-              console.log(url);
               
-              
-              fetch(url, {
-                    method: 'PUT',
-                    credentials: "same-origin",
-                    headers:{
-                      'X-CSRFToken': csrftoken,
-                      'Accept': 'application/json',
-                      'Content-Type': 'application/json',
-                      'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                      'stock':new_stock
-                    })
-                
-              }).then(function(response) {
-                  return response.json();
-              }).then(function(data) {
-                  console.log("Dato:", data);
-              }).catch(function(ex) {
-                  console.log("Fallo con:", ex);
-                  alert("ultimo fetch");
-              });
-              */
               alert("¡El libro ahora es tuyo!");
 
               
