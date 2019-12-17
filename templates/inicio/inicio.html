@@ -9,8 +9,9 @@
 
 {% endblock%}
 {% block extra_js %}
-
+{% csrf_token %}
 <script>
+var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     async function getBooks() {
       try {
         let res = await fetch('http://127.0.0.1:8000/api/libros/');
@@ -32,10 +33,6 @@
                   "<div class='profile-data-name'>"+libro.nombre+"</div>"+
                   "<div class='profile-data-title'>"+libro.nombre+"</div>"+
                 "</div>"+
-                //"<div class='profile-controls'>"+
-                //  "<a class='profile-control-left' data-target='#message-box-info-44' data-toggle='modal'><span class='fa fa-edit'></span></a>"+
-                //  "<a class='profile-control-right' data-target='#message-box-danger-44' data-toggle='modal'><span class='fa fa-trash-o'></span></a>"+
-                //"</div>"+
               "</div>"+
               "<div class='panel-body'>"+
                 "<div class='contact-info'>"+
@@ -49,25 +46,10 @@
                     "<p><small>Autor</small><br />"+libro.autor.first_name +" "+ libro.autor.last_name +"</p>"+
                   "</div>"+
                 "</div>"+
-                "<a href='' onclick='myFunction("+libro.id+")' class='btn btn-primary'><span class='fa fa-check'></span>Prestar</a>"+
+                "<a href='' onclick='myFunction("+libro.id+","+libro.stock+")' class='btn btn-primary'><span class='fa fa-check'></span>Prestar</a>"+
               "</div>"+
             "</div>"+
           "</div>"
-
-
-
-          /*
-          let content = 
-          "<div class='col-xs-auto spaceCard'>"+
-          "<div class='card'>"+
-          "<h5 class='card-header'>" + libro.nombre +"</h5>"+
-          "<div class='card-body'>"+
-          "<h5 class='card-title'><span class='colorDnicos'>Editorial: </span>" + libro.editorial.nombre + "</h5>"+
-          "<div class='card-text'><ul>"
-
-          content += "</ul></div><a href='#' class='btn btn-primary btn-block'><span class='fa fa-check'></span>x button</a></div</div></div>";
-
-          */
           $('.container').append(content);
         }
       } catch (error) {
@@ -76,15 +58,73 @@
     }
     getBooks();
 
-    function myFunction(libro_id) {
-      alert("Agregado: "+libro_id);
+    function myFunction(id,stock) {
+      
       //primero: vas a preguntar si tiene stock.
       //segundo: vas a checar si no tiene prestado el libro.
       //tecero: restar 1 al stock del libro.
       //cuarto: lanzar un modal para ingresar la fecha de entrega del libro.
       //cuarto: agregar el libro a mis libros prestados(DetallePrestamo).
       //fin.
-      
+      if(stock>0){
+        getLibroPrestado(id,stock);
+      }
+      else{
+        alert("El libro no se puede prestar porque no cuenta con stock.");
+      }  
+    }
+
+
+    async function getLibroPrestado(libro_id,stock) {
+      try {
+        let flag = false;
+        let res = await fetch('http://127.0.0.1:8000/api/libro-prestado/');
+        let data = await res.json();
+        for ( let detalle of data){
+          if (detalle.libro==libro_id && detalle.prestador=={{user.id}}){
+            flag=true;
+          }
+        }
+        if (flag){//Quita el diferente si lo tienes
+            alert("Ya esta asociado el libro a este prestador");
+        }else{
+            let user_id = {{ user.id }}
+            console.log(user_id);
+            alert(user_id);
+            fetch("http://127.0.0.1:8000/api/libro-prestado/", {
+                    method: 'POST',
+                    credentials: "same-origin",
+                    headers:{
+                      'X-CSRFToken': csrftoken,
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json',
+                      'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                      'prestador':user_id,
+                      'libro':libro_id,
+                      'activo':true
+                    })
+                
+              }).then(function(response) {
+                  //alert(response);
+                  return response.json();
+              }).then(function(data) {
+                  console.log("Dato:", data);
+                  //alert(data);
+              }).catch(function(ex) {
+                  console.log("Catch con:", ex);
+                  //alert(ex);
+              });
+              
+              alert("¡El libro ahora es tuyo!");
+
+              
+        }
+      } catch (error) {
+          console.log(error);
+          alert("Error");
+      }
     }
     
 
