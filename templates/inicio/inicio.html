@@ -59,13 +59,6 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     getBooks();
 
     function myFunction(id,stock) {
-      
-      //primero: vas a preguntar si tiene stock.
-      //segundo: vas a checar si no tiene prestado el libro.
-      //tecero: restar 1 al stock del libro.
-      //cuarto: lanzar un modal para ingresar la fecha de entrega del libro.
-      //cuarto: agregar el libro a mis libros prestados(DetallePrestamo).
-      //fin.
       if(stock>0){
         getLibroPrestado(id,stock);
       }
@@ -85,12 +78,11 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
             flag=true;
           }
         }
-        if (flag){//Quita el diferente si lo tienes
+        if (flag){
             alert("Ya esta asociado el libro a este prestador");
         }else{
             let user_id = {{ user.id }}
             console.log(user_id);
-            alert(user_id);
             fetch("http://127.0.0.1:8000/api/libro-prestado/", {
                     method: 'POST',
                     credentials: "same-origin",
@@ -107,14 +99,11 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
                     })
                 
               }).then(function(response) {
-                  //alert(response);
                   return response.json();
               }).then(function(data) {
                   console.log("Dato:", data);
-                  //alert(data);
               }).catch(function(ex) {
                   console.log("Catch con:", ex);
-                  //alert(ex);
               });
               
               alert("¡El libro ahora es tuyo!");
@@ -123,7 +112,6 @@ var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         }
       } catch (error) {
           console.log(error);
-          alert("Error");
       }
     }
     
